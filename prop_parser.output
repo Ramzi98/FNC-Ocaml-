@@ -1,0 +1,436 @@
+   0  $accept : %entry% $end
+
+   1  programme : proplog EOF
+
+   2  proplog : VAR
+   3          | Vrai
+   4          | Faux
+   5          | NEG proplog
+   6          | LPAR NEG proplog RPAR
+   7          | proplog IMPLIQ proplog
+   8          | LPAR proplog IMPLIQ proplog RPAR
+   9          | proplog EQUIV proplog
+  10          | LPAR proplog EQUIV proplog RPAR
+  11          | proplog ET proplog
+  12          | LPAR proplog ET proplog RPAR
+  13          | proplog OU proplog
+  14          | LPAR proplog OU proplog RPAR
+
+  15  %entry% : '\001' programme
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . programme  (15)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	programme  goto 8
+	proplog  goto 9
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	proplog : NEG . proplog  (5)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 10
+
+
+state 4
+	proplog : LPAR . NEG proplog RPAR  (6)
+	proplog : LPAR . proplog IMPLIQ proplog RPAR  (8)
+	proplog : LPAR . proplog EQUIV proplog RPAR  (10)
+	proplog : LPAR . proplog ET proplog RPAR  (12)
+	proplog : LPAR . proplog OU proplog RPAR  (14)
+
+	NEG  shift 11
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 12
+
+
+state 5
+	proplog : Vrai .  (3)
+
+	.  reduce 3
+
+
+state 6
+	proplog : Faux .  (4)
+
+	.  reduce 4
+
+
+state 7
+	proplog : VAR .  (2)
+
+	.  reduce 2
+
+
+state 8
+	%entry% : '\001' programme .  (15)
+
+	.  reduce 15
+
+
+state 9
+	programme : proplog . EOF  (1)
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	ET  shift 13
+	OU  shift 14
+	IMPLIQ  shift 15
+	EQUIV  shift 16
+	EOF  shift 17
+	.  error
+
+
+state 10
+	proplog : NEG proplog .  (5)
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	.  reduce 5
+
+
+state 11
+	proplog : NEG . proplog  (5)
+	proplog : LPAR NEG . proplog RPAR  (6)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 18
+
+
+state 12
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : LPAR proplog . IMPLIQ proplog RPAR  (8)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : LPAR proplog . EQUIV proplog RPAR  (10)
+	proplog : proplog . ET proplog  (11)
+	proplog : LPAR proplog . ET proplog RPAR  (12)
+	proplog : proplog . OU proplog  (13)
+	proplog : LPAR proplog . OU proplog RPAR  (14)
+
+	ET  shift 19
+	OU  shift 20
+	IMPLIQ  shift 21
+	EQUIV  shift 22
+	.  error
+
+
+state 13
+	proplog : proplog ET . proplog  (11)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 23
+
+
+state 14
+	proplog : proplog OU . proplog  (13)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 24
+
+
+state 15
+	proplog : proplog IMPLIQ . proplog  (7)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 25
+
+
+state 16
+	proplog : proplog EQUIV . proplog  (9)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 26
+
+
+state 17
+	programme : proplog EOF .  (1)
+
+	.  reduce 1
+
+
+state 18
+	proplog : NEG proplog .  (5)
+	proplog : LPAR NEG proplog . RPAR  (6)
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	RPAR  shift 27
+	ET  reduce 5
+	OU  reduce 5
+	IMPLIQ  reduce 5
+	EQUIV  reduce 5
+
+
+state 19
+	proplog : proplog ET . proplog  (11)
+	proplog : LPAR proplog ET . proplog RPAR  (12)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 28
+
+
+state 20
+	proplog : proplog OU . proplog  (13)
+	proplog : LPAR proplog OU . proplog RPAR  (14)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 29
+
+
+state 21
+	proplog : proplog IMPLIQ . proplog  (7)
+	proplog : LPAR proplog IMPLIQ . proplog RPAR  (8)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 30
+
+
+state 22
+	proplog : proplog EQUIV . proplog  (9)
+	proplog : LPAR proplog EQUIV . proplog RPAR  (10)
+
+	NEG  shift 3
+	LPAR  shift 4
+	Vrai  shift 5
+	Faux  shift 6
+	VAR  shift 7
+	.  error
+
+	proplog  goto 31
+
+
+state 23
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog ET proplog .  (11)
+	proplog : proplog . OU proplog  (13)
+
+	OU  shift 14
+	ET  reduce 11
+	IMPLIQ  reduce 11
+	EQUIV  reduce 11
+	RPAR  reduce 11
+	EOF  reduce 11
+
+
+state 24
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+	proplog : proplog OU proplog .  (13)
+
+	.  reduce 13
+
+
+state 25
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog IMPLIQ proplog .  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	ET  shift 13
+	OU  shift 14
+	IMPLIQ  shift 15
+	EQUIV  shift 16
+	RPAR  reduce 7
+	EOF  reduce 7
+
+
+state 26
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog EQUIV proplog .  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	ET  shift 13
+	OU  shift 14
+	EQUIV  shift 16
+	IMPLIQ  reduce 9
+	RPAR  reduce 9
+	EOF  reduce 9
+
+
+state 27
+	proplog : LPAR NEG proplog RPAR .  (6)
+
+	.  reduce 6
+
+
+state 28
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog ET proplog .  (11)
+	proplog : LPAR proplog ET proplog . RPAR  (12)
+	proplog : proplog . OU proplog  (13)
+
+	OU  shift 14
+	RPAR  shift 32
+	ET  reduce 11
+	IMPLIQ  reduce 11
+	EQUIV  reduce 11
+
+
+state 29
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+	proplog : proplog OU proplog .  (13)
+	proplog : LPAR proplog OU proplog . RPAR  (14)
+
+	RPAR  shift 33
+	ET  reduce 13
+	OU  reduce 13
+	IMPLIQ  reduce 13
+	EQUIV  reduce 13
+
+
+state 30
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog IMPLIQ proplog .  (7)
+	proplog : LPAR proplog IMPLIQ proplog . RPAR  (8)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	ET  shift 13
+	OU  shift 14
+	IMPLIQ  shift 15
+	EQUIV  shift 16
+	RPAR  shift 34
+	.  error
+
+
+state 31
+	proplog : proplog . IMPLIQ proplog  (7)
+	proplog : proplog . EQUIV proplog  (9)
+	proplog : proplog EQUIV proplog .  (9)
+	proplog : LPAR proplog EQUIV proplog . RPAR  (10)
+	proplog : proplog . ET proplog  (11)
+	proplog : proplog . OU proplog  (13)
+
+	ET  shift 13
+	OU  shift 14
+	EQUIV  shift 16
+	RPAR  shift 35
+	IMPLIQ  reduce 9
+
+
+state 32
+	proplog : LPAR proplog ET proplog RPAR .  (12)
+
+	.  reduce 12
+
+
+state 33
+	proplog : LPAR proplog OU proplog RPAR .  (14)
+
+	.  reduce 14
+
+
+state 34
+	proplog : LPAR proplog IMPLIQ proplog RPAR .  (8)
+
+	.  reduce 8
+
+
+state 35
+	proplog : LPAR proplog EQUIV proplog RPAR .  (10)
+
+	.  reduce 10
+
+
+15 terminals, 4 nonterminals
+16 grammar rules, 36 states
